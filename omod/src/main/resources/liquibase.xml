@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    
+    <changeSet id="domincadrugextension-1" author="akhil">
+        <sql>
+            drop table if exists drug_order_extension;
+        </sql>
+    </changeSet>
+    <changeSet author="akhil" id="domincadrugextension-2">
+        <preConditions onFail="WARN" onError="WARN">
+            <not>
+                <tableExists tableName="drug_order_extension" />
+            </not>
+        </preConditions>
+        <createTable tableName="drug_order_extension">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="uid" type="varchar(255)"></column>
+            <column name="order_id" type="int">
+                <constraints unique="true" />
+            </column>
+            <column name="drugorder_status" defaultValue="-1" type="int"></column>
+            <column name="approved_date" type="datetime"></column>
+            <column name="approved_by_user_id" type="int" defaultValue="-1"></column>			
+            <column name="route_of_administration" type="int" defaultValue="-1"></column>
+            <column name="duration" type="int" defaultValue="-1"></column>
+            <column name="duration_unit" type="int" defaultValue="-1"></column>						
+            <column name="pharmacist_instruction" type="varchar(255)"></column>
+            <column name="pharmacist_drug_dispensed_quantity" type="int" defaultValue="-1"></column>
+            <column name="pharmacist_user_id" type="int" defaultValue="-1"></column>
+            <column name="pharmacist_drug_dispensed_date" type="datetime"></column>			
+            <column name="renewed_order_id" type="int" defaultValue="-1"></column>
+            <column name="renew_reason" type="varchar(255)"></column>                                                                        
+        </createTable>
+    </changeSet>
+    <changeSet author="akhil" id="domincadrugextension-3">
+        <addColumn tableName="drug_order_extension">
+            <column name="approving_user_instructions" type="varchar(255)"></column>
+            <column name="renew_order_date" type="datetime"></column>
+        </addColumn>
+    </changeSet>	
+    <!--
+    <changeSet author="blevine" id="domincalaborder">
+        <preConditions onFail="WARN" onError="WARN">
+            <not>
+                <tableExists tableName="laborder" />
+            </not>
+        </preConditions>
+        <createTable tableName="laborder">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="order_id" type="int">
+                <constraints unique="true" />
+            </column>
+            <column name="uid" type="varchar(255)"></column>            
+            <column name="isprocessed" defaultValue="0" type="TINYINT(1)"></column>
+            <column name="labset_id" type="int"></column>
+            <column name="labtests" type="varchar(1000)"></column>    
+                                                         
+        </createTable>
+    </changeSet>
+    -->
+</databaseChangeLog>

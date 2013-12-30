@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- This is a normal spring application context file -->
+
+<!-- There is a webModuleApplicationContext.xml file that has web-specific spring setup in this same folder -->
+
+<beans>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.dominicamodule.DrugOrderExtensionService</value>
+                <value>org.openmrs.module.dominicamodule.LabOrderService</value> 
+                <bean
+                    class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+
+
+                    <property name="transactionManager">
+                        <ref bean="transactionManager" />
+                    </property>
+
+
+                    <property name="target">
+                        <bean class="org.openmrs.module.dominicamodule.impl.DrugOrderExtensionServiceImpl">
+                            <property name="gdao">
+                                <bean
+                                    class="org.openmrs.module.dominicamodule.db.hibernate.GenericDAOImpl">
+                                    <property name="sessionFactory">
+                                        <ref bean="sessionFactory" />
+                                    </property>
+                                </bean>
+                            </property>
+                            <property name="doedao">
+                                <bean
+                                    class="org.openmrs.module.dominicamodule.db.hibernate.DrugOrderExtensionDAOImpl">
+                                    <property name="sessionFactory">
+                                        <ref bean="sessionFactory" />
+                                    </property>
+                                </bean>
+                            </property>
+                        </bean>
+                        
+                        <bean class="org.openmrs.module.dominicamodule.impl.LabOrderServiceImpl">     
+                            <property name="dao">
+                                <bean
+                                    class="org.openmrs.module.dominicamodule.db.hibernate.HibernateLabOrderDAO">
+                                    <property name="sessionFactory">
+                                        <ref bean="sessionFactory" />
+                                    </property>
+                                </bean>
+                            </property>
+                                
+                        </bean>
+                        
+                    </property>
+                    
+
+                    <property name="preInterceptors">
+                        <list>
+                            <ref bean="authorizationInterceptor" />
+                        </list>
+                    </property>
+                    <property name="transactionAttributeSource">
+                        <bean
+                            class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource" />
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+        
+</beans>

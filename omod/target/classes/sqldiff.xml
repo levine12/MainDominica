@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqldiff PUBLIC "-//OpenMRS//DTD OpenMRS SQL Diff Config 1.0//EN" "http://resources.openmrs.org/doctype/sqldiff-1.0.dtd">
+
+<sqldiff version="1.0">
+    <help></help>
+	
+    <!-- This entry is run at module startup.  If the global property called "laborder.database_version" in the database
+    doesn't exist or is less than 0.1, then this "diff" is run.  If the value of that GP is greater than or equal to 0.1, 
+    then this won't be run.  Immediately after running this diff, openmrs sets the laborder.database_version GP to 0.1  -->
+             
+    -->
+    <diff>
+        <version>0.1</version>
+        <author>blevine</author>
+        <date>Dec 29, 2013</date>
+        <description>
+            Create the lab order table
+        </description>
+        <sql>
+            CREATE TABLE IF NOT EXISTS laborder (
+            order_id int(11) NOT NULL,
+            uuid varchar(38) NOT NULL,
+            isprocessed tinyint(1) NOT NULL DEFAULT 0,
+            labset_id int(11) NOT NULL,
+            labtests varchar(1000) NOT NULL,
+            PRIMARY KEY (order_id),
+            CONSTRAINT laborder_order_id FOREIGN KEY (order_id) REFERENCES orders (order_id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        </sql>
+    </diff>
+
+	
+</sqldiff>

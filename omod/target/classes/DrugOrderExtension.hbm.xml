@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.openmrs.module.dominicamodule">
+  <class name="DrugOrderExtension" table="drug_order_extension">
+      <id name="id" type="int" column="id" unsaved-value="0">
+			<generator class="native" />
+      </id>
+      <property name="uid" column="uid" ></property>
+
+      <property name="orderId" column="order_id" ></property>          
+
+      <property name="drugOrderStatus" column="drugorder_status" ></property>          
+      <property name="approvedDate" type="java.util.Date" column="approved_date" ></property>                
+      
+
+      <property name="routeOfAdministration" column="route_of_administration" ></property>          
+      <property name="duration" column="duration" ></property>          
+      <property name="durationUnit" column="duration_unit" ></property>                    
+
+      <property name="pharmacistInstruction" type="java.lang.String" column="pharmacist_instruction" ></property>          
+      <property name="pharmacistDrugDispensedQuantity" column="pharmacist_drug_dispensed_quantity" ></property>                                   
+      <property name="pharmacistDrugDispensedDate" type="java.util.Date" column="pharmacist_drug_dispensed_date" ></property>                
+
+      <property name="renewedOrderId" column="renewed_order_id" ></property>          
+      <property name="renewReason" type="java.lang.String" column="renew_reason" ></property>                     
+      <property name="approvingUserInstructions" type="java.lang.String" column="approving_user_instructions" ></property>                     
+      <property name="renewOrderDate" type="java.util.Date" column="renew_order_date" ></property>                     
+
+      
+      <many-to-one name="approvedByUser" class="org.openmrs.User" not-null="false" not-found="ignore">
+			<column name="approved_by_user_id"></column>
+      </many-to-one>
+      <many-to-one name="pharmacist" class="org.openmrs.User" not-null="false" not-found="ignore">
+			<column name="pharmacist_user_id"></column>
+      </many-to-one>
+  </class>   
+</hibernate-mapping>

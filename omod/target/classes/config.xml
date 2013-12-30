@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module configVersion="1.2">
+	
+	<!-- Base Module Properties -->
+    <id>dominicamodule</id>
+    <name>Dominica Module</name>
+    <version>0.1-SNAPSHOT</version>
+    <package>org.openmrs.module.dominicamodule</package>
+    <author>Dr. Barry Levine</author>
+    <description>
+        Parent project for Dominica Module
+    </description>
+
+    <activator>org.openmrs.module.dominicamodule.DominicaModuleActivator</activator>
+	
+	<!-- <updateURL>https://modules.openmrs.org/modules/download/@MODULE_ID@/update.rdf</updateURL> -->
+	<!-- /Base Module Properties -->
+	
+    <require_version>1.9.*</require_version>
+    <require_database_version>1.0.0</require_database_version>
+	
+	<!-- Extensions -->
+    <extension>
+        <point>org.openmrs.admin.list</point>
+        <class>org.openmrs.module.dominicamodule.extension.html.AdminList</class>
+    </extension>
+    <extension>
+        <point>org.openmrs.patientDashboardTab</point>
+        <class>org.openmrs.module.dominicamodule.extension.html.LabsPatientDashboardTab</class>
+    </extension>
+
+   <extension>
+        <point>org.openmrs.patientDashboardTab</point>
+        <class>org.openmrs.module.dominicamodule.extension.html.AllergiesPatientDashboardTab</class>
+    </extension>
+
+    <extension>
+        <point>org.openmrs.patientDashboardTab</point>
+        <class>org.openmrs.module.dominicamodule.extension.html.PatientDrugsDashboardTabExt</class>
+    </extension>
+    <extension>
+        <point>org.openmrs.patientDashboard.afterLastEncounter</point>
+        <class>org.openmrs.module.dominicamodule.extension.html.PatientSummaryExtension</class>
+    </extension>                      
+
+        
+    <!-- The hibernate mapping file stored in /metadata/Note.hbm.xml and in the omod when packaged ////
+    -->
+    <mappingFiles> 
+       LabOrder.hbm.xml
+    </mappingFiles>	
+   
+        
+    <globalProperty>
+        <property>dominicamodule.labsetsproperty</property>
+        <defaultValue></defaultValue>
+        <description>
+            Provide a list of concept ids corresponding to labsets used in lab orders
+            e.g. 1234,6477
+        </description>
+    </globalProperty>
+        
+	<!-- AOP
+	<advice>
+		<point>org.openmrs.api.FormService</point>
+		<class>@MODULE_PACKAGE@.advice.DuplicateFormAdvisor</class>
+	</advice>
+	 /AOP -->
+<!--	
+        
+    <privilege>
+        <name>Pharm add prescription</name>
+        <description>Pharm add prescription</description>
+    </privilege>
+    <privilege>
+        <name>Pharm view prescription</name>
+        <description>Pharm add prescription</description>
+    </privilege>
+    <privilege>
+        <name>Pharm return prescription</name>
+        <description>Pharm add prescription</description>
+    </privilege>
+ 
+-->
+
+	<!-- Required Global Properties 
+	<globalProperty>
+		<property>@MODULE_ID@.someProperty</property>
+		<defaultValue></defaultValue>
+		<description>
+			A description of the global property goes here.  The description
+			should explain enough for administrators to understand the purpose
+			and possible values for the global property.
+		</description>
+	</globalProperty>
+	/Required Global Properties -->
+		
+    <dwr>
+        <allow>
+            <create creator="new" javascript="DWRMyNotesService">
+                <param name="class" value="org.openmrs.module.dominicamodule.web.controller.DWRMyNotesService"/>
+                <include method="getNotesForPatient"/>
+                                <!-- Can include other methods from class, too -->
+            </create> 
+                        <!-- The following conversion tells spring to generate javascript to be able to
+                        save and retrieve Note objects from the jsp page
+                        See http://directwebremoting.org/dwr/documentation/server/configuration/dwrxml/converters/bean.html
+                        -->
+            <convert converter="bean" match="org.openmrs.dominicamodule.Note">
+                <param name="exclude" value="patient"/>
+            </convert>
+
+           
+            <create creator="new" javascript="DWRMyConceptSetService">
+                <param name="class" value="org.openmrs.module.dominicamodule.web.controller.DWRMyConceptSetService"/>
+                <include method="getCheckBoxConceptsForOrder"/>
+                <include method="getLabSetConceptsForConceptId"/> 
+            </create> 
+            
+            
+            <convert converter="bean" match="org.openmrs.module.dominicamodule.web.controller.ConceptIdAndName">
+                <param name="include"
+                       value="conceptId, conceptName" />
+            </convert>       
+            
+            <convert converter="bean" match="org.openmrs.module.dominicamodule.web.controller.EditLabOrderItem">
+                <param name="include"
+                       value="orderId, labTestConceptName, labTestConceptId, isChecked, labSetName, labSetConceptId" />
+            </convert>   
+
+
+                        
+            <create creator="new" javascript="DWRFindPatientBL">
+                <param name="class" value="org.openmrs.module.dominicamodule.web.controller.DWRFindPatientBL"/>
+                <include method="findPatients"/>
+            </create>
+                        
+            <create creator="new" javascript="DWRSaveNoteBL">
+                <param name="class" value="org.openmrs.module.dominicamodule.web.controller.DWRSaveNoteBL"/>
+                <include method="saveNoteForPatient"/>
+            </create>
+        </allow>
+
+        <signatures>
+
+                      <![CDATA[
+			import org.openmrs.module.dominicamodule.web.controller.DWRMyConceptSetService;
+                        DWRMyConceptSetService.getCheckBoxConceptsForOrder(int  orderId);
+			DWRMyConceptSetService.getLabSetConceptsForConceptId(int labSetConceptSelected);
+			]]>
+                        
+			<![CDATA[
+			import org.openmrs.module.dominicamodule.web.DWRMyNotesService;
+			DWRMyNotesService.getNotesForPatient(String patientName);
+			]]>
+
+
+
+
+			<![CDATA[
+			import org.openmrs.module.dominicamodule.web.DWRMyNotesService;
+			DWRMyNotesService.getNotesForPatient(String patientName);
+			]]>
+
+			<![CDATA[
+			import org.openmrs.module.dominicamodule.web.controller.DWRFindPatientBL;
+			DWRFindPatientBL.findPatients(String searchValue, boolean includeVoided);
+			]]>   
+                        
+			<![CDATA[
+			import org.openmrs.module.dominicamodule.web.controller.DWRSaveNoteBL;
+			DWRSaveNoteBL.saveNoteForPatient(String patientId, String title, String text);
+			]]>         
+        </signatures>	
+               
+    </dwr>
+	
+	<!-- Servlets -->
+	<!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> 
+	<servlet>
+		<servlet-name>formDownload</servlet-name>
+		<servlet-class>@MODULE_PACKAGE@.web.FormDownloadServlet</servlet-class>
+	</servlet>
+	-->
+	<!-- /Servlets -->
+	
+        <mappingFiles>DrugOrderExtension.hbm.xml
+LabOrder.hbm.xml
+Note.hbm.xml
+</mappingFiles>
+	
+	<!-- Internationalization -->
+	<!-- All message codes should start with @MODULE_ID@.* -->
+    <messages>
+        <lang>en</lang>
+        <file>messages.properties</file>
+    </messages>
+    <messages>
+        <lang>fr</lang>
+        <file>messages_fr.properties</file>
+    </messages>
+    <messages>
+        <lang>es</lang>
+        <file>messages_es.properties</file>
+    </messages>
+	<!-- /Internationalization -->
+	
+</module>
+
